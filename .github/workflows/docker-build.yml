@@ -1,0 +1,31 @@
+name: Build and Push Microservices
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: docker/setup-buildx-action@v2
+
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & push web service
+        uses: docker/build-push-action@v4
+        with:
+          context: ./web-service
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/web-service:latest
+
+      - name: Build & push analytics service
+        uses: docker/build-push-action@v4
+        with:
+          context: ./analytics-service
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/analytics-service:latest

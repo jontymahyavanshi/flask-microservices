@@ -1,0 +1,26 @@
+version: '3'
+services:
+  web:
+    build: ./web-service
+    ports:
+      - "5000:5000"
+    environment:
+      - ANALYTICS_URL=http://analytics:5001/visit
+    depends_on:
+      - analytics
+      - redis
+
+  analytics:
+    build: ./analytics-service
+    ports:
+      - "5001:5001"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
